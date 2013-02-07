@@ -1,0 +1,29 @@
+
+when calling this in your testApp.cpp:
+mixer.AudioUnitGetDeviceList();
+
+
+the console will show something like this:
+
+GetAudioDevices: 5 devices available
+
+Checking device Built-in Microphone
+Device[50] name = Built-in Microphone, input channels = 2, output channels = 0
+
+Checking device Built-in Output
+Device[40] name = Built-in Output, input channels = 0, output channels = 2
+
+Checking device Soundflower (2ch)
+Device[96] name = Soundflower (2ch), input channels = 2, output channels = 2
+
+Checking device Soundflower (16ch)
+Device[57] name = Soundflower (16ch), input channels = 16, output channels = 16
+
+Checking device ProFire 610
+Device[107] name = ProFire 610, input channels = 6, output channels = 10
+
+
+you can now use the start function like this:
+output.start(107);
+
+at this point the device numbers are not yet neatly sequencial.
