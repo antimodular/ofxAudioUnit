@@ -8,6 +8,7 @@
 #include "ofPolyline.h"
 #include "ofTypes.h"
 #include "ofxAudioUnitUtils.h"
+#include "ofxAudioDeviceInfo.h"
 
 #pragma mark ofxAudioUnit
 
@@ -48,7 +49,9 @@ public:
 							UInt32 inOutputBusNumber, 
 							UInt32 inNumberFrames, 
 							AudioBufferList *ioData); 
-	
+
+    ofxAudioDeviceInfo dList;
+    
 	// explicit and implicit conversions to the underlying AudioUnit struct
 	AudioUnit getUnit()       {return *_unit;}
 	operator AudioUnit()      {return *_unit;}
@@ -74,6 +77,8 @@ public:
 				int y = 100,
 				bool forceGeneric = false);
 #endif
+    
+    void AudioUnitGetDeviceList();
 	
 protected:
 	AudioUnitRef _unit;
@@ -84,6 +89,8 @@ protected:
 	bool savePreset(const CFURLRef &presetURL);
 	
 	static void AudioUnitDeleter(AudioUnit * unit);
+    
+   
 };
 
 #pragma mark - ofxAudioUnitMixer
@@ -168,8 +175,14 @@ public:
 	ofxAudioUnitOutput();
 	~ofxAudioUnitOutput(){stop();}
 	
-	bool start();
+	bool start(int deviceID = -1);
 	bool stop();
+    
+private:
+
+	bool _isReady;
+	bool configureOutputDevice(int deviceID);
+    
 };
 
 #pragma mark - ofxAudioUnitInput
@@ -189,7 +202,7 @@ public:
 					UInt32 inNumberFrames,
 					AudioBufferList *ioData);
 	
-	bool start();
+	bool start(int deviceID = -1);
 	bool stop();
 	
 private:
@@ -197,7 +210,7 @@ private:
 	ofPtr<InputImpl> _impl;
 	
 	bool _isReady;
-	bool configureInputDevice();
+	bool configureInputDevice(int deviceID);
 };
 
 #pragma mark - ofxAudioUnitSampler
