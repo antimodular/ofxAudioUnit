@@ -62,6 +62,12 @@ void ofxAudioUnit::initUnit()
 	OFXAU_RETURN(AudioUnitInitialize(*_unit),                       "initializing unit");
 }
 
+void ofxAudioUnit::AudioUnitGetDeviceList(){
+    
+    dList.GetAudioDevice();
+    //AudioDeviceInfo * device = dList.GetAudioDevice();
+}
+
 // ----------------------------------------------------------
 void ofxAudioUnit::AudioUnitDeleter(AudioUnit * unit)
 // ----------------------------------------------------------
