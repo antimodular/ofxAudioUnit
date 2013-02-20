@@ -1,3 +1,5 @@
+stephan schulz
+antimodular.com
 
 when calling this in your testApp.cpp:
 mixer.AudioUnitGetDeviceList();
