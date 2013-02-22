@@ -117,6 +117,7 @@ bool ofxAudioUnitMixer::setOutputBusCount(unsigned int numberOfOutputBusses)
     AudioStreamBasicDescription outputASBD;
     UInt32 theSize = sizeof(outputASBD);
     //http://lists.apple.com/archives/coreaudio-api/2005/Jun/msg00164.html
+   /*
     theSize = sizeof(outputASBD);
     AudioUnitGetProperty(*_unit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 1, &outputASBD, &theSize);
     printf("device format:\n");
@@ -137,18 +138,18 @@ bool ofxAudioUnitMixer::setOutputBusCount(unsigned int numberOfOutputBusses)
     Float64 rate=0;
     theSize = sizeof(Float64);
     //you could probably pull this rate value straight from asbdDevice.mSampleRate, but here's another way if you have your InputDeviceID handy.
-    AudioDeviceGetProperty(107, 0, 1,kAudioDevicePropertyNominalSampleRate, &theSize, &rate);
+    AudioDeviceGetProperty(111, 0, 1,kAudioDevicePropertyNominalSampleRate, &theSize, &rate);
     outputASBD.mSampleRate = rate;
     cout<<"rate "<<rate<<endl;
     
-    AudioDeviceGetProperty(107, 0, 1,kAudioDevicePropertyNominalSampleRate, &theSize, &rate);
+    //AudioDeviceGetProperty(111, 0, 1,kAudioDevicePropertyNominalSampleRate, &theSize, &rate);
     //outputASBD.mSampleRate = rate;
-    cout<<"rate "<<rate<<endl;
+    //cout<<"rate "<<rate<<endl;
     
     //Set the stream format of AUHAL to match the sample rate of the input device
     theSize = sizeof(outputASBD);
     AudioUnitSetProperty(*_unit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &outputASBD, theSize);
-    
+    */
     
     cout<<"setOutputBusCount "<<numberOfOutputBusses<<endl;
 	UInt32 busCount = numberOfOutputBusses;
@@ -174,6 +175,9 @@ bool ofxAudioUnitMixer::setOutputBusCount(unsigned int numberOfOutputBusses)
      };
      */
     //AudioStreamBasicDescription outputASBD
+    
+    cout<<"ofxAudioUnitMixer::setOutputBusCount "<<endl;
+    cout<<"set outputASBD2 with busCount = "<<busCount<<endl;
     AudioStreamBasicDescription outputASBD2 = {
 		.mSampleRate       = 44100, //32000 //48000
 		.mFormatID         = kAudioFormatLinearPCM,
@@ -188,7 +192,7 @@ bool ofxAudioUnitMixer::setOutputBusCount(unsigned int numberOfOutputBusses)
     OFXAU_RET_BOOL(AudioUnitSetProperty(*_unit,
 										kAudioUnitProperty_StreamFormat,
 										kAudioUnitScope_Output,
-										1,
+										0,
 										&outputASBD2,
 										sizeof(outputASBD2)),
 				   "setting number of output busses");
