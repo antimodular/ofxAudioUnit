@@ -23,6 +23,7 @@
 // output unit will allow you to read the samples being sent from the synth
 // to the output.
 
+
 class ofxAudioUnit
 {
 public:
