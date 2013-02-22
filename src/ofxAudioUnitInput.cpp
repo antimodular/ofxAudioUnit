@@ -117,10 +117,12 @@ ofxAudioUnit& ofxAudioUnitInput::connectTo(ofxAudioUnit &otherUnit, int destinat
 #pragma mark - Start / Stop
 
 // ----------------------------------------------------------
-bool ofxAudioUnitInput::start()
+bool ofxAudioUnitInput::start(int deviceID)
 // ----------------------------------------------------------
 {
-	if(!_isReady) _isReady = configureInputDevice();
+    cout<<"ofxAudioUnitInput::start() "<<deviceID<< endl;
+    
+	if(!_isReady) _isReady = configureInputDevice(deviceID);
 	if(!_isReady) return false;
 	
 	OFXAU_RET_BOOL(AudioOutputUnitStart(*_unit), "starting hardware input unit");
@@ -136,7 +138,7 @@ bool ofxAudioUnitInput::stop()
 #pragma mark - Configuration
 
 // ----------------------------------------------------------
-bool ofxAudioUnitInput::configureInputDevice()
+bool ofxAudioUnitInput::configureInputDevice(int deviceID)
 // ----------------------------------------------------------
 {
 	UInt32 on  = 1;
@@ -145,7 +147,7 @@ bool ofxAudioUnitInput::configureInputDevice()
 										 kAudioUnitScope_Input,
 										 1,
 										 &on,
-										 sizeof(on)), 
+										 sizeof(on)),
 					"enabling input on HAL unit");
 	
 	UInt32 off = 0;
@@ -173,14 +175,18 @@ bool ofxAudioUnitInput::configureInputDevice()
 											   &inputDeviceID),
 					"getting device ID for default input");
 	
+    if(deviceID != -1) inputDeviceID = deviceID;
+    
 	OFXAU_RET_FALSE(AudioUnitSetProperty(*_unit,
 										 kAudioOutputUnitProperty_CurrentDevice,
 										 kAudioUnitScope_Global,
 										 0,
 										 &inputDeviceID,
-										 deviceIDSize), 
+										 deviceIDSize),
 					"setting HAL unit's device ID");
 	
+    cout<<"inputDeviceID "<<inputDeviceID<<endl;
+    
 	AudioStreamBasicDescription deviceASBD = {0};
 	UInt32 ASBDSize = sizeof(deviceASBD);
 	OFXAU_RET_FALSE(AudioUnitGetProperty(*_unit,
@@ -211,7 +217,7 @@ bool ofxAudioUnitInput::configureInputDevice()
 										 sizeof(inputCallback)),
 					"setting hardware input callback");
 	
-	OFXAU_RET_BOOL(AudioUnitInitialize(*_unit), 
+	OFXAU_RET_BOOL(AudioUnitInitialize(*_unit),
 				   "initializing hardware input unit after setting it to input mode");
 }
 

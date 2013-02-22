@@ -1,8 +1,11 @@
 #include "ofxAudioUnit.h"
 #include "ofUtils.h"
 #include <iostream>
+#include <Carbon/Carbon.h>
+#include "ofxAudioUnitUtils.h"
 
 using namespace std;
+
 
 // ----------------------------------------------------------
 ofxAudioUnit::ofxAudioUnit(AudioComponentDescription description)
@@ -11,6 +14,7 @@ ofxAudioUnit::ofxAudioUnit(AudioComponentDescription description)
 {
 	initUnit();
 }
+
 
 // ----------------------------------------------------------
 ofxAudioUnit::ofxAudioUnit(OSType type,
@@ -23,7 +27,8 @@ ofxAudioUnit::ofxAudioUnit(OSType type,
 	_desc.componentManufacturer = manufacturer;
 	_desc.componentFlags        = 0;
 	_desc.componentFlagsMask    = 0;
-	initUnit();
+	
+    initUnit();
 };
 
 // ----------------------------------------------------------
@@ -60,13 +65,25 @@ void ofxAudioUnit::initUnit()
 	_unit = ofPtr<AudioUnit>((AudioUnit *)malloc(sizeof(AudioUnit)), AudioUnitDeleter);
 	OFXAU_RETURN(AudioComponentInstanceNew(component, _unit.get()), "creating new unit");
 	OFXAU_RETURN(AudioUnitInitialize(*_unit),                       "initializing unit");
+    
+    
 }
 
 void ofxAudioUnit::AudioUnitGetDeviceList(){
     
-    dList.GetAudioDevice();
+    deviceIDArray = new int[20];
+    deviceNameArray = new string[20];
+    
+    dList.GetAudioDevice(deviceIDArray,deviceNameArray);
+    
+    //    for(int i=0; i<20; i++){
+    //
+    //        cout<<i<<" ofxAudioUnit->deviceIDArray "<<deviceIDArray[i]<<endl;
+    //    }
+    
     //AudioDeviceInfo * device = dList.GetAudioDevice();
 }
+
 
 // ----------------------------------------------------------
 void ofxAudioUnit::AudioUnitDeleter(AudioUnit * unit)
@@ -101,20 +118,31 @@ void ofxAudioUnit::setParameter(AudioUnitParameterID parameter,
 ofxAudioUnit& ofxAudioUnit::connectTo(ofxAudioUnit &otherUnit, int destinationBus, int sourceBus)
 // ----------------------------------------------------------
 {
+    cout<<"ofxAudioUnit& ofxAudioUnit::connectTo("<<endl;
 	if(!_unit) return;
 	AudioUnitConnection connection;
 	connection.sourceAudioUnit    = *_unit;
 	connection.sourceOutputNumber = sourceBus;
 	connection.destInputNumber    = destinationBus;
-	
-	OFXAU_PRINT(AudioUnitSetProperty(*(otherUnit._unit),
+    
+	/*
+     OFXAU_PRINT(AudioUnitSetProperty(*(otherUnit._unit),
+     kAudioUnitProperty_MakeConnection,
+     kAudioUnitScope_Input,
+     destinationBus,
+     &connection,
+     sizeof(AudioUnitConnection)),
+     "connecting units");
+     */
+    
+    OFXAU_PRINT(AudioUnitSetProperty(*(otherUnit._unit),
 									 kAudioUnitProperty_MakeConnection,
 									 kAudioUnitScope_Input,
 									 destinationBus,
 									 &connection,
 									 sizeof(AudioUnitConnection)),
 				"connecting units");
-	
+    
 	return otherUnit;
 }
 
@@ -215,7 +243,7 @@ bool ofxAudioUnit::loadPreset(const CFURLRef &presetURL)
 		CFRelease(presetData);
 		CFRelease(presetPList);
 	}
-	else 
+	else
 	{
 		cout << "Couldn't read preset at " << StringForPathFromURL(presetURL) << endl;
 	}
@@ -259,7 +287,7 @@ bool ofxAudioUnit::savePreset(const CFURLRef &presetURL)
 	if(!dataDir.exists()) dataDir.create();
 	
 	SInt32 errorCode;
-	Boolean writeSuccess = CFURLWriteDataAndPropertiesToResource(presetURL, 
+	Boolean writeSuccess = CFURLWriteDataAndPropertiesToResource(presetURL,
 																 presetData,
 																 NULL,
 																 &errorCode);
@@ -268,7 +296,7 @@ bool ofxAudioUnit::savePreset(const CFURLRef &presetURL)
 	
 	if(!writeSuccess)
 	{
-		cout << "Error " << errorCode << " writing preset file at " 
+		cout << "Error " << errorCode << " writing preset file at "
 		<< StringForPathFromURL(presetURL) << endl;
 	}
 	
@@ -331,3 +359,4 @@ void ofxAudioUnit::setRenderCallback(AURenderCallbackStruct callback, int bus)
 									 sizeof(callback)),
 				"setting render callback");
 }
+

@@ -12,7 +12,7 @@
 
 #pragma mark ofxAudioUnit
 
-// ofxAudioUnit is a general-purpose class to simplify using Audio Units in 
+// ofxAudioUnit is a general-purpose class to simplify using Audio Units in
 // openFrameworks apps. There are also several subclasses defined in this file
 // which provide convenience functions for specific Audio Units (eg. file player,
 // mixer, output, speech synth...)
@@ -46,18 +46,18 @@ public:
 	// behaviour
 	virtual OSStatus render(AudioUnitRenderActionFlags *ioActionFlags,
 							const AudioTimeStamp *inTimeStamp,
-							UInt32 inOutputBusNumber, 
-							UInt32 inNumberFrames, 
-							AudioBufferList *ioData); 
-
-    ofxAudioDeviceInfo dList;
+							UInt32 inOutputBusNumber,
+							UInt32 inNumberFrames,
+							AudioBufferList *ioData);
+    
+    ofxAudioDeviceInfo dList; //(int * t_deviceIDArray);
     
 	// explicit and implicit conversions to the underlying AudioUnit struct
 	AudioUnit getUnit()       {return *_unit;}
 	operator AudioUnit()      {return *_unit;}
 	AudioUnitRef getUnitRef() {return _unit;}
 	
-	// This pair of functions will look for the preset in the 
+	// This pair of functions will look for the preset in the
 	// apps's data folder and append ".aupreset" to the name
 	bool loadCustomPreset(const std::string &presetName);
 	bool saveCustomPreset(const std::string &presetName);
@@ -78,6 +78,8 @@ public:
 				bool forceGeneric = false);
 #endif
     
+    int* deviceIDArray;
+    string* deviceNameArray;
     void AudioUnitGetDeviceList();
 	
 protected:
@@ -90,7 +92,7 @@ protected:
 	
 	static void AudioUnitDeleter(AudioUnit * unit);
     
-   
+    
 };
 
 #pragma mark - ofxAudioUnitMixer
@@ -102,11 +104,11 @@ protected:
 
 // You can use this unit to get access to the level
 // of the audio going through it (in decibels).
-// First call enableInputMetering() or 
+// First call enableInputMetering() or
 // enableOutputMetering() (depending on which one
 // you're interested in). After this, getInputLevel()
 // or getOutputLevel() will return a float describing
-// the current level in decibles (most likely in the 
+// the current level in decibles (most likely in the
 // range -120 - 0)
 
 class ofxAudioUnitMixer : public ofxAudioUnit
@@ -115,7 +117,7 @@ public:
 	ofxAudioUnitMixer();
 	
 	void setInputVolume (float volume, int bus = 0);
-	void setOutputVolume(float volume);
+	void setOutputVolume(float volume, int bus = 0);
 	void setPan(float pan, int bus = 0);
 	
 	float getInputLevel(int bus = 0);
@@ -123,7 +125,9 @@ public:
 	
 	bool setInputBusCount(unsigned int numberOfInputBusses);
 	unsigned int getInputBusCount() const;
-	
+    bool setOutputBusCount(unsigned int numberOfOutputBusses);
+	unsigned int getOutputBusCount() const;
+    
 	void  enableInputMetering(int bus = 0);
 	void  enableOutputMetering();
 	void  disableInputMetering(int bus = 0);
@@ -136,7 +140,7 @@ public:
 // This audio unit allows you to play any file that
 // Core Audio supports (mp3, aac, caf, aiff, etc)
 
-class ofxAudioUnitFilePlayer : public ofxAudioUnit 
+class ofxAudioUnitFilePlayer : public ofxAudioUnit
 {
 	AudioFileID _fileID[1];
 	ScheduledAudioFileRegion _region;
@@ -144,7 +148,7 @@ class ofxAudioUnitFilePlayer : public ofxAudioUnit
 public:
 	ofxAudioUnitFilePlayer();
 	~ofxAudioUnitFilePlayer();
-
+    
 	bool   setFile(const std::string &filePath);
 	UInt32 getLength();
 	void   setLength(UInt32 length);
@@ -179,7 +183,7 @@ public:
 	bool stop();
     
 private:
-
+    
 	bool _isReady;
 	bool configureOutputDevice(int deviceID);
     
@@ -188,7 +192,7 @@ private:
 #pragma mark - ofxAudioUnitInput
 
 class ofxAudioUnitInput : public ofxAudioUnit
-{	
+{
 public:
 	ofxAudioUnitInput(unsigned int samplesToBuffer = 2048);
 	~ofxAudioUnitInput();
@@ -215,7 +219,7 @@ private:
 
 #pragma mark - ofxAudioUnitSampler
 
-class ofxAudioUnitSampler : public ofxAudioUnit 
+class ofxAudioUnitSampler : public ofxAudioUnit
 {
 public:
 	ofxAudioUnitSampler();
@@ -265,13 +269,14 @@ public:
 	void getSamples(MonoSamples &outData) const;
 	void getSamples(MonoSamples &outData, unsigned int channel) const;
 	
+    void getSampleBuffer(float *leftSamples);
 	void getStereoWaveform(ofPolyline &outLeft, ofPolyline &outRight, float width, float height) const;
 	void getLeftWaveform(ofPolyline &outLine, float width, float height) const;
 	void getRightWaveform(ofPolyline &outLine, float width, float height) const;
 	
 	void setSource(ofxAudioUnit * source);
 	void setSource(AURenderCallbackStruct callback, UInt32 channels = 2);
-
+    
 private:
 	struct TapImpl;
 	ofPtr<TapImpl> _impl;
@@ -288,7 +293,7 @@ private:
 // an AUNetReceive via bonjour. It supports a handful
 // of different stream formats as well.
 
-// You can change the stream format by calling 
+// You can change the stream format by calling
 // setFormat() with one of "kAUNetSendPresetFormat_"
 // constants
 

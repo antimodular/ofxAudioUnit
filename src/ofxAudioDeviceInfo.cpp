@@ -3,27 +3,31 @@
 #include <AudioToolbox/AudioToolbox.h>
 
 /*
-struct DeviceListEntry {
-    bool              assigned;
-    AudioDeviceInfo   device;
-    int               priority;
-};
+ struct DeviceListEntry {
+ bool              assigned;
+ AudioDeviceInfo   device;
+ int               priority;
+ };
+ 
+ typedef struct DeviceListEntry DeviceListEntry;
+ 
+ 
+ DeviceListEntry * Devices = NULL;
+ int DeviceCount = 0;
+ */
 
-typedef struct DeviceListEntry DeviceListEntry;
 
-
-DeviceListEntry * Devices = NULL;
-int DeviceCount = 0;
-*/
-
-
-OSStatus ofxAudioDeviceInfo::fillDeviceList()
+void ofxAudioDeviceInfo::GetAudioDevice(int * t_deviceIDArray, std::string * deviceNameArray)
 {
     OSStatus        err = noErr;
     AudioDeviceID   *devices = NULL;
     UInt16          devicesAvailable = 0;
     
     //if (Devices != NULL) return -1;
+    
+    for(int i=0; i<20;i++){
+        t_deviceIDArray[i] = -1;
+    }
     
     // fetch a pointer to the list of available devices
     if((err = GetAudioDevices((Ptr*)&devices, &devicesAvailable)) != noErr) {
@@ -33,14 +37,14 @@ OSStatus ofxAudioDeviceInfo::fillDeviceList()
     //fprintf(stderr, "devicesAvailable = %d\n", (int) devicesAvailable);
     
     /*
-    Devices = (DeviceListEntry *) calloc(sizeof(DeviceListEntry), devicesAvailable);
-    for (int i=0; i<devicesAvailable; i++) {
-        Devices[i].assigned = false;
-        Devices[i].device.name[0] = '\0';
-        Devices[i].device.inputDevice = -1;
-        Devices[i].device.outputDevice = -1;
-        Devices[i].priority = -1;
-    }
+     Devices = (DeviceListEntry *) calloc(sizeof(DeviceListEntry), devicesAvailable);
+     for (int i=0; i<devicesAvailable; i++) {
+     Devices[i].assigned = false;
+     Devices[i].device.name[0] = '\0';
+     Devices[i].device.inputDevice = -1;
+     Devices[i].device.outputDevice = -1;
+     Devices[i].priority = -1;
+     }
      */
     
     
@@ -148,8 +152,17 @@ OSStatus ofxAudioDeviceInfo::fillDeviceList()
          }
          }
          */
-        fprintf(stderr, "Device[%d] name = %s, input channels = %d, output channels = %d\n", deviceID, deviceName, (int) theNumberInputChannels, (int) theNumberOutputChannels);
+        t_deviceIDArray[i] = (int)deviceID;
+        deviceNameArray[i] = deviceName;
+        //fprintf(stderr,"%i",deviceID);
+        fprintf(stderr, "%i, Device[%d] name = %s, input channels = %d, output channels = %d\n", i,deviceID, deviceName, (int) theNumberInputChannels, (int) theNumberOutputChannels);
     }
+    
+    //    for(int i=0; i<20; i++){
+    //
+    //        fprintf(stderr,"%i deviceinfo->deviceIDArray %i \n",i,t_deviceIDArray[i]); //<<i<<" deviceinfo->deviceIDArray "<<t_deviceIDArray[i]<<endl;
+    //    }
+    
     /*
      for (int i=0; i<devicesAvailable; i++) {
      fprintf(stderr, "strlen %s\n", Devices[i].device.name);
@@ -163,32 +176,34 @@ OSStatus ofxAudioDeviceInfo::fillDeviceList()
     
     
     //fprintf(stderr, "DeviceCount %i  %i\n", DeviceCount, devicesAvailable);
-    return err;
+    //  return err;
     
 }
 
-void ofxAudioDeviceInfo::GetAudioDevice()
-//AudioDeviceInfo * ofxAudioDeviceInfo::GetAudioDevice()
-{
-    fillDeviceList();
-    
-    /*
-    AudioDeviceInfo * info = NULL;
-    
-    if (Devices == NULL) fillDeviceList();
-    
-    int priority = 0;
-    
-    for (int i=DeviceCount - 1; i>=0; i--) {
-        if (Devices[i].assigned == false && Devices[i].priority > priority) {
-            Devices[i].assigned = true;
-            info = &Devices[i].device;
-            priority = Devices[i].priority;
-        }
-    }
-    return info;
-     */
-}
+/*
+ void ofxAudioDeviceInfo::GetAudioDevice(int *deviceIDArray)
+ //AudioDeviceInfo * ofxAudioDeviceInfo::GetAudioDevice()
+ {
+ fillDeviceList();
+ 
+ 
+ AudioDeviceInfo * info = NULL;
+ 
+ if (Devices == NULL) fillDeviceList();
+ 
+ int priority = 0;
+ 
+ for (int i=DeviceCount - 1; i>=0; i--) {
+ if (Devices[i].assigned == false && Devices[i].priority > priority) {
+ Devices[i].assigned = true;
+ info = &Devices[i].device;
+ priority = Devices[i].priority;
+ }
+ }
+ return info;
+ */
+//}
+
 
 
 OSStatus ofxAudioDeviceInfo::GetAudioDevices( Ptr * devices, UInt16 * devicesAvailable )
