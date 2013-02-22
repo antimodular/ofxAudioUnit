@@ -1,5 +1,10 @@
 stephan schulz
+<<<<<<< HEAD
 www.antimodular.com
+=======
+antimodular.com
+2013
+>>>>>>> info update
 
 when calling this in your testApp.cpp:
 mixer.AudioUnitGetDeviceList();
