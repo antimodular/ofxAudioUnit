@@ -1,6 +1,3 @@
-#include "TargetConditionals.h"
-#if !TARGET_OS_IPHONE
-
 #include "ofxAudioUnit.h"
 #include "ofxAudioUnitUtils.h"
 
@@ -18,15 +15,13 @@ ofxAudioUnitSpeechSynth::ofxAudioUnitSpeechSynth()
 	initUnit();
 	UInt32 dataSize = sizeof(SpeechChannel);
 	
-	if(_unit) {
-		OFXAU_PRINT(AudioUnitGetProperty(*_unit,
-										 kAudioUnitProperty_SpeechChannel,
-										 kAudioUnitScope_Global,
-										 0,
-										 &_channel,
-										 &dataSize),
-					"getting speech channel");
-	}
+	OFXAU_PRINT(AudioUnitGetProperty(*_unit,
+									 kAudioUnitProperty_SpeechChannel,
+									 kAudioUnitScope_Global,
+									 0,
+									 &_channel,
+									 &dataSize),
+				"getting speech channel");
 }
 
 // ----------------------------------------------------------
@@ -56,7 +51,7 @@ void ofxAudioUnitSpeechSynth::printAvailableVoices()
 	std::vector<std::string> voiceNames = getAvailableVoices();
 	for(int i = 0; i < voiceNames.size(); i++)
 	{
-		std::cout << i+1 << ":\t" << voiceNames.at(i) << std::endl;
+		cout << i+1 << ":\t" << voiceNames.at(i) << endl;
 	}
 }
 
@@ -75,11 +70,11 @@ std::vector<std::string> ofxAudioUnitSpeechSynth::getAvailableVoices()
 		VoiceDescription vDesc;
 		GetIndVoice(i, &vSpec);
 		GetVoiceDescription(&vSpec, &vDesc, sizeof(VoiceDescription));
-		std::string name((const char *)vDesc.name);
+		string name = string((const char *)vDesc.name);
 		
 		// the first "character" in vDesc.name is actually just the length
 		// of the string. We're tossing it out here by making a substring.
-		voiceNames.push_back(std::string(name, 1, name[0]));
+		voiceNames.push_back(string(name, 1, name[0]));
 	}
 	return voiceNames;
 }
@@ -95,7 +90,8 @@ bool ofxAudioUnitSpeechSynth::setVoice(int voiceIndex)
 	if(!err)
 	{
 		StopSpeech(_channel);
-		err = SetSpeechInfo(_channel, soCurrentVoice, &vSpec);
+		
+		err = SetSpeechProperty(_channel, kSpeechCurrentVoiceProperty, &vSpec);
 	}
 	
 	return (err == 0);
@@ -117,5 +113,3 @@ bool ofxAudioUnitSpeechSynth::setVoice(const std::string &voiceName)
 	
 	return false;
 }
-
-#endif //!TARGET_OS_IPHONE

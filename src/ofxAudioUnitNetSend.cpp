@@ -1,6 +1,3 @@
-#include "TargetConditionals.h"
-#if !TARGET_OS_IPHONE
-
 #include "ofxAudioUnit.h"
 #include "ofxAudioUnitUtils.h"
 
@@ -65,5 +62,3 @@ void ofxAudioUnitNetSend::setFormat(unsigned int formatIndex)
 									 sizeof(format)),
 				"setting net send format");
 }
-
-#endif //!TARGET_OS_IPHONE

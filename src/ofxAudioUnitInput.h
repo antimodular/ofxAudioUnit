@@ -17,20 +17,19 @@ public:
 					UInt32 inNumberFrames,
 					AudioBufferList *ioData);
 	
-	UInt32 getNumOutputChannels() const;
-	
 	bool start();
 	bool stop();
 	
-#if !TARGET_OS_IPHONE
 	bool setDevice(AudioDeviceID deviceID);
-	bool setDevice(const std::string &deviceName);
+	bool setDevice(const string &deviceName);
 	
-	static void listInputDevices();
-#endif
-	
+//	static void listInputDevices();
+    void listInputDevices();	
+    vector<int> deviceListIDs;
+    vector<string> deviceListNames;
+    
 private:
 	struct InputImpl;
-	std::shared_ptr<InputImpl> _impl;
+	ofPtr<InputImpl> _impl;
 	bool configureInputDevice();
 };

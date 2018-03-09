@@ -54,8 +54,8 @@ AudioUnitRef ofxAudioUnit::allocUnit(AudioComponentDescription desc)
 	AudioComponent component = AudioComponentFindNext(NULL, &_desc);
 	if(!component)
 	{
-		cout << "Couldn't locate component for description: " << StringForDescription(desc) << endl;
-		return AudioUnitRef();
+		cout << "Couldn't locate component for description" << endl;
+		return;
 	}
 	
 	ofPtr<AudioUnit> unit((AudioUnit *)malloc(sizeof(AudioUnit)), AudioUnitDeleter);
@@ -64,15 +64,11 @@ AudioUnitRef ofxAudioUnit::allocUnit(AudioComponentDescription desc)
 }
 
 // ----------------------------------------------------------
-bool ofxAudioUnit::initUnit()
+void ofxAudioUnit::initUnit()
 // ----------------------------------------------------------
 {
 	_unit = allocUnit(_desc);
-	if(_unit) {
-		OFXAU_RET_BOOL(AudioUnitInitialize(*_unit), "initializing unit");
-	} else {
-		return false;
-	}
+	OFXAU_RETURN(AudioUnitInitialize(*_unit), "initializing unit");
 }
 
 // ----------------------------------------------------------
@@ -90,29 +86,7 @@ ofxAudioUnit::~ofxAudioUnit()
 	
 }
 
-// ----------------------------------------------------------
-bool ofxAudioUnit::setup(AudioComponentDescription description)
-// ----------------------------------------------------------
-{
-	_desc = description;
-	return initUnit();
-}
-
-// ----------------------------------------------------------
-bool ofxAudioUnit::setup(OSType type, OSType subType, OSType manufacturer)
-// ----------------------------------------------------------
-{
-	_desc = (AudioComponentDescription){
-		.componentType = type,
-		.componentSubType = subType,
-		.componentManufacturer = manufacturer
-	};
-	return initUnit();
-}
-
 #pragma mark - Parameters
-
-#if !TARGET_OS_IPHONE
 
 // ----------------------------------------------------------
 void ofxAudioUnit::setParameter(AudioUnitParameterID parameter,
@@ -123,51 +97,6 @@ void ofxAudioUnit::setParameter(AudioUnitParameterID parameter,
 {
 	OFXAU_PRINT(AudioUnitSetParameter(*_unit, parameter, scope, bus, value, 0), "setting parameter");
 }
-
-// ----------------------------------------------------------
-vector<AudioUnitParameterInfo> ofxAudioUnit::getParameterList(bool includeExpert, bool includeReadOnly)
-// ----------------------------------------------------------
-{
-	vector<AudioUnitParameterInfo> paramList;
-	
-	AUParamInfo info(*_unit, includeExpert, includeReadOnly);
-	
-	for (int i = 0; i < info.NumParams(); ++i) {
-		if (info.GetParamInfo(i)) {
-			paramList.push_back(info.GetParamInfo(i)->ParamInfo());
-		}
-	}
-	return paramList;
-}
-
-// ----------------------------------------------------------
-void ofxAudioUnit::printParameterList(bool includeExpert, bool includeReadOnly)
-// ----------------------------------------------------------
-{
-	vector<AudioUnitParameterInfo> paramList = getParameterList(includeExpert, includeReadOnly);
-	
-	cout << "\n[id] param name [min : max : default]" << endl;
-	
-	for(size_t i = 0; i < paramList.size(); ++i) {
-		AudioUnitParameterInfo& p = paramList[i];
-		
-		const size_t bufferSize = 1024;
-		char buffer[bufferSize];
-		CFStringGetCString(p.cfNameString, buffer, bufferSize, kCFStringEncodingUTF8);
-		string paramName(buffer);
-		
-		cout << "[" << i << "] " << paramName << " [";
-		cout << p.minValue << " : " << p.maxValue << " : " << p.defaultValue << "]" << endl;
-		
-		if(p.flags & kAudioUnitParameterFlag_CFNameRelease) {
-			CFRelease(p.cfNameString);
-		}
-	}
-	
-	cout << endl;
-}
-
-#endif // !TARGET_OS_IPHONE
 
 #pragma mark - Connections
 
@@ -203,6 +132,20 @@ ofxAudioUnitDSPNode& ofxAudioUnit::connectTo(ofxAudioUnitDSPNode &node)
 }
 
 // ----------------------------------------------------------
+ofxAudioUnit& ofxAudioUnit::operator>>(ofxAudioUnit& otherUnit)
+// ----------------------------------------------------------
+{
+	return connectTo(otherUnit);
+}
+
+// ----------------------------------------------------------
+ofxAudioUnitDSPNode& ofxAudioUnit::operator>>(ofxAudioUnitDSPNode &node)
+// ----------------------------------------------------------
+{
+	return connectTo(node);
+}
+
+// ----------------------------------------------------------
 OSStatus ofxAudioUnit::render(AudioUnitRenderActionFlags *ioActionFlags,
 							  const AudioTimeStamp *inTimeStamp,
 							  UInt32 inOutputBusNumber,
@@ -212,26 +155,6 @@ OSStatus ofxAudioUnit::render(AudioUnitRenderActionFlags *ioActionFlags,
 {
 	return AudioUnitRender(*_unit, ioActionFlags, inTimeStamp,
 						   inOutputBusNumber, inNumberFrames, ioData);
-}
-
-// ----------------------------------------------------------
-UInt32 ofxAudioUnit::getNumOutputChannels() const
-// ----------------------------------------------------------
-{
-	if(!_unit) return 0;
-	
-	AudioStreamBasicDescription ASBD = {0};
-	UInt32 ASBD_size = sizeof(ASBD);
-	
-	OFXAU_PRINT(AudioUnitGetProperty(*_unit,
-									 kAudioUnitProperty_StreamFormat,
-									 kAudioUnitScope_Output,
-									 0,
-									 &ASBD,
-									 &ASBD_size),
-				"getting unit's output ASBD");
-	
-	return ASBD.mChannelsPerFrame;
 }
 
 #pragma mark - Presets
@@ -304,7 +227,6 @@ bool ofxAudioUnit::loadPreset(const CFURLRef &presetURL)
 	
 	bool presetSetSuccess = presetReadSuccess && (presetSetStatus == noErr);
 	
-#if !TARGET_OS_IPHONE
 	if(presetSetSuccess)
 	{
 		// Notify any listeners that params probably changed
@@ -313,7 +235,6 @@ bool ofxAudioUnit::loadPreset(const CFURLRef &presetURL)
 		paramNotification.mParameterID = kAUParameterListener_AnyParameter;
 		AUParameterListenerNotify(NULL, NULL, &paramNotification);
 	}
-#endif
 	
 	return presetSetSuccess;
 }

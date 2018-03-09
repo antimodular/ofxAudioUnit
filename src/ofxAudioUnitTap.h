@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofxAudioUnitDSPNode.h"
-class ofPolyline;
+#include "ofPolyline.h"
 
 // ofxAudioUnitTap acts like an Audio Unit (as in, you
 // can connect it to other Audio Units). In reality, it
@@ -28,43 +28,29 @@ public:
 	virtual ~ofxAudioUnitTap();
 	
 	// Container for samples returned from an ofxAudioUnitTap
-	typedef std::vector<Float32> MonoSamples;
+	typedef std::vector<AudioUnitSampleType> MonoSamples;
 	
 	struct StereoSamples
 	{
 		ofxAudioUnitTap::MonoSamples left;
 		ofxAudioUnitTap::MonoSamples right;
-		size_t size(){return std::min(left.size(), right.size());}
-		bool empty(){return left.empty() || right.empty();}
+		size_t size(){return min(left.size(), right.size());}
 	};
 	
 	void setBufferLength(unsigned int samplesToBuffer);
 	
 	void getSamples(StereoSamples &outData) const;
-	void getSamples(MonoSamples &outData, unsigned channel = 0) const;
-	void getLeftSamples(MonoSamples &outData) const;
-	void getRightSamples(MonoSamples &outData) const;
+	void getSamples(MonoSamples &outData) const;
+	void getSamples(MonoSamples &outData, unsigned int channel) const;
 	
-	// These output an ofPolyline representing the waveform of the most recent samples in the buffer.
-	// You can use the "sampleRate" param to skip samples for the sake of speed (i.e. a sampleRate
-	// of 3 = every 3rd sample will be represented in the resulting ofPolyline)
-	void getStereoWaveform(ofPolyline &outLeft, ofPolyline &outRight, float width, float height, unsigned sampleRate = 1);
-	void getLeftWaveform(ofPolyline &outLine, float width, float height, unsigned sampleRate = 1);
-	void getRightWaveform(ofPolyline &outLine, float width, float height, unsigned sampleRate = 1);
-	void getWaveform(ofPolyline &outLine, float width, float height, unsigned channel = 0, unsigned sampleRate = 1);
+	void getStereoWaveform(ofPolyline &outLeft, ofPolyline &outRight, float width, float height);
+	void getLeftWaveform(ofPolyline &outLine, float width, float height);
+	void getRightWaveform(ofPolyline &outLine, float width, float height);
 	
-	// These are convenience functions that return an ofPolyline directly, but are generally less
-	// efficient than the ones with an "out" parameter above
-	ofPolyline getLeftWaveform(float width, float height, unsigned sampleRate = 1);
-	ofPolyline getRightWaveform(float width, float height, unsigned sampleRate = 1);
-	ofPolyline getWaveform(float width, float height, unsigned channel = 0, unsigned sampleRate = 1);
-	
-	// These output the RMS (i.e. "loudness") of the most recent buffer
-	float getRMS(unsigned channel);
+	float getRMS(unsigned int channel);
 	float getLeftChannelRMS()  {return getRMS(0);}
 	float getRightChannelRMS() {return getRMS(1);}
 	
 private:
 	MonoSamples _tempBuffer;
-	std::unique_ptr<ofPolyline> _tempWave;
 };

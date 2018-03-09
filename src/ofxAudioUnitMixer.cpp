@@ -80,6 +80,31 @@ void ofxAudioUnitMixer::setPan(float pan, int bus)
 bool ofxAudioUnitMixer::setInputBusCount(unsigned int numberOfInputBusses)
 // ----------------------------------------------------------
 {
+    //,AudioStreamBasicDescription * inASBD
+    /*
+    UInt32 busCount = numberOfInputBusses;
+    OFXAU_PRINT(AudioUnitSetProperty(*_unit,
+									 kAudioUnitProperty_ElementCount,
+									 kAudioUnitScope_Input,
+									 0,
+									 &busCount,
+									 sizeof(busCount)),
+				"setting number of input busses");
+    
+    
+    if(inASBD) {
+		for(int i = 0; i < numberOfInputBusses; i++) {
+			OFXAU_PRINT(AudioUnitSetProperty(*_unit,
+											 kAudioUnitProperty_StreamFormat,
+											 kAudioUnitScope_Input,
+											 i,
+											 inASBD,
+											 sizeof(AudioStreamBasicDescription)),
+						"setting matrix mixer input ASBD");
+		}
+	}
+     */
+    
 	UInt32 busCount = numberOfInputBusses;
 	OFXAU_RET_BOOL(AudioUnitSetProperty(*_unit,
 										kAudioUnitProperty_ElementCount,
@@ -88,6 +113,7 @@ bool ofxAudioUnitMixer::setInputBusCount(unsigned int numberOfInputBusses)
 										&busCount,
 										sizeof(busCount)),
 				   "setting number of input busses");
+     
 }
 
 // ----------------------------------------------------------
@@ -128,7 +154,7 @@ float ofxAudioUnitMixer::getOutputLevel() const
 {	
 	AudioUnitParameterValue level;
 	OFXAU_PRINT(AudioUnitGetParameter(*_unit,
-									  kMultiChannelMixerParam_PreAveragePower,
+									  kMultiChannelMixerParam_PostAveragePower,
 									  kAudioUnitScope_Output,
 									  0,
 									  &level),

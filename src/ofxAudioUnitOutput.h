@@ -17,10 +17,15 @@ public:
 	bool start();
 	bool stop();
 	
-#if !TARGET_OS_IPHONE
-	bool setDevice(AudioDeviceID deviceID);
-	bool setDevice(const std::string &deviceName);
+    bool setDevice(AudioDeviceID deviceID);
+	bool setDevice(AudioDeviceID deviceID, std::vector<int> _channelInputMap);
+	bool setDevice(const string &deviceName);
 
-	static void listOutputDevices();
-#endif
+	 void listOutputDevices();
+    
+    vector<int> deviceIDArray;
+    vector<string> deviceNameArray;
+    int outputDeviceAmount;
+    
+    int getOutChannelAmount();
 };

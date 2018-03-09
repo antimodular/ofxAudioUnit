@@ -1,6 +1,3 @@
-#include "TargetConditionals.h"
-#if !TARGET_OS_IPHONE
-
 #include "ofxAudioUnit.h"
 #include "ofxAudioUnitUtils.h"
 
@@ -24,7 +21,7 @@ ofxAudioUnitNetReceive::ofxAudioUnitNetReceive()
 void ofxAudioUnitNetReceive::connectToHost(const std::string &address, unsigned long port)
 // ----------------------------------------------------------
 {
-	std::stringstream ss;
+	stringstream ss;
 	ss << address << ":" << port;
 	CFStringRef hostName = CFStringCreateWithCString(kCFAllocatorDefault,
 													 ss.str().c_str(),
@@ -64,5 +61,3 @@ void ofxAudioUnitNetReceive::disconnect()
 									 sizeof(disconnect)),
 				"disconnecting net receive");
 }
-
-#endif // !TARGET_OS_IPHONE
