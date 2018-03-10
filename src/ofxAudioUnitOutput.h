@@ -2,6 +2,9 @@
 
 #include "ofxAudioUnitBase.h"
 
+#include "ofUtils.h"
+#include <iostream>
+
 // ofxAudioUnitOutput wraps the AUHAL output unit on OSX
 // and the RemoteIO unit on iOS
 
@@ -17,15 +20,18 @@ public:
 	bool start();
 	bool stop();
 	
-    bool setDevice(AudioDeviceID deviceID);
-	bool setDevice(AudioDeviceID deviceID, std::vector<int> _channelInputMap);
-	bool setDevice(const string &deviceName);
+#if !TARGET_OS_IPHONE
+	bool setDevice(AudioDeviceID deviceID);
+	bool setDevice(const std::string &deviceName);
 
 	 void listOutputDevices();
     
+    //stephan schulz edits
+    bool setDevice(AudioDeviceID deviceID, std::vector<int> _channelInputMap);
     vector<int> deviceIDArray;
     vector<string> deviceNameArray;
     int outputDeviceAmount;
     
     int getOutChannelAmount();
+#endif
 };

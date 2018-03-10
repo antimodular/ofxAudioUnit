@@ -1,11 +1,15 @@
 #pragma once
 
 #include "ofxAudioUnitBase.h"
+#include <ApplicationServices/ApplicationServices.h>
 
 // ofxAudioUnitSpeechSynth wraps the AUSpeechSynthesis unit.
 // This unit lets you access the Speech Synthesis API
 // for text-to-speech on your mac (the same thing that
 // powers the VoiceOver utility).
+
+// This unit is not available when compiling in 32 bit mode
+// on Yosemite
 
 class ofxAudioUnitSpeechSynth : public ofxAudioUnit
 {

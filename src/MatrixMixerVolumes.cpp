@@ -71,7 +71,7 @@ home:
 	return result;
 }
 
-void	PrintMatrixMixerVolumes (FILE* file, AudioUnit au)
+void PrintMatrixMixerVolumes (FILE* file, AudioUnit au)
 {
 	UInt32 dims[2];
 	UInt32 theSize =  sizeof(UInt32) * 2;
@@ -110,13 +110,7 @@ home:
 			fprintf (file, "\t%.3f   ", theVols[(i + 1) * (outputs + 1) - 1]);
 			
 			for (unsigned int j = 0; j < outputs; ++j)
-            {
-                if(theVols[(i * (outputs  + 1)) + j] != 0){
-                    fprintf (file, "(%.3f) ", theVols[(i * (outputs  + 1)) + j]);
-                }else{
-                    fprintf (file, "(-----) ");
-                }
-            }
+				fprintf (file, "(%.3f) ", theVols[(i * (outputs  + 1)) + j]);
 		} else {
 			fprintf (file, "\t        ");
 			for (unsigned int j = 0; j < outputs; ++j)

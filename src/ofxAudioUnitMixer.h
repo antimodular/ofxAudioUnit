@@ -28,7 +28,7 @@ public:
 	float getInputLevel(int bus = 0);
 	float getOutputLevel() const;
 	
-	bool setInputBusCount(unsigned int numberOfInputBusses); //,AudioStreamBasicDescription * inASBD);
+	bool setInputBusCount(unsigned int numberOfInputBusses);
 	unsigned int getInputBusCount() const;
 	
 	void  enableInputMetering(int bus = 0);

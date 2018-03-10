@@ -2,6 +2,18 @@
 
 #include "ofxAudioUnitBase.h"
 
+// ofxAudioUnitMatrixMixer wraps the AUMatrixMixer
+// this unit allows you to have an arbitrary number
+// of input / output busses, with an arbitrary mix
+// between inputs and outputs (e.g. an input on bus
+// 2 could have a level of 0.2 in output bus 7, and
+// an level of 0.6 in output bus 4).
+
+// This is unfinished, and should be considered very
+// alpha. Feel free to get in contact with me if you
+// need a hand figuring out how to use it, since it
+// is not intuitive in the slightest.
+
 class ofxAudioUnitMatrixMixer : public ofxAudioUnit {
 
 public:
@@ -13,12 +25,13 @@ public:
 	// this will remove any active connections, effectively resetting the unit
 	void setChannelLayout(UInt32 inputBusCount, UInt32 outputBusCount, AudioStreamBasicDescription * inASBD = NULL, AudioStreamBasicDescription * outASBD = NULL);
 	
-	void setLevels(const std::vector<float> &levels);
-	void setLevels(const float * levels, size_t levelsCount);
-	
+    //stephan schulz edits
+    void setLevels(const std::vector<float> &levels);
+    void setLevels(const float * levels, size_t levelsCount);
+    
     float getOutputLevel(int channel) const;
     void  enableOutputMetering();
-	void  disableOutputMetering();
+    void  disableOutputMetering();
     
 private:
 	void initWithLayout(UInt32 inputBusCount, UInt32 outputBusCount, AudioStreamBasicDescription * inASBD = NULL, AudioStreamBasicDescription * outASBD = NULL);

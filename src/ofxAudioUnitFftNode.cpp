@@ -1,3 +1,6 @@
+#include "TargetConditionals.h"
+#if !TARGET_OS_IPHONE
+
 #include "ofxAudioUnitFftNode.h"
 #include <math.h>
 
@@ -127,7 +130,7 @@ static void PerformFFT(float * input, float * window, COMPLEX_SPLIT &fftData, FF
 	fftData.imagp[0] = 0.0f;
 }
 
-bool ofxAudioUnitFftNode::getAmplitude(vector<float> &outAmplitude)
+bool ofxAudioUnitFftNode::getAmplitude(std::vector<float> &outAmplitude)
 {
 	getSamplesFromChannel(_sampleBuffer, 0);
 	
@@ -214,3 +217,5 @@ bool ofxAudioUnitFftNode::getPhase(std::vector<float> &outPhase)
 	outPhase.assign(_sampleBuffer.begin(), _sampleBuffer.begin() + (_N / 2));
 	return true;
 }
+
+#endif // !TARGET_OS_IPHONE
