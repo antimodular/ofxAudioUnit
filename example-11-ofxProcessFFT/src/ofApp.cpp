@@ -1,38 +1,27 @@
 #include "ofApp.h"
 
+//this example uses custom ofxFft with changes to ofxProcessFFT
+//https://github.com/antimodular/ofxFft/tree/dev_noMic_easyFft
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	
-
-    //---ofxFFT
-    plotHeight = 128;
-    bufferSize = 2048; //ofxAudioUnit is set for 2048 samplesToBuffer
-    
-    fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_HAMMING);
-    // To use FFTW, try:
-    //fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_HAMMING, OF_FFT_FFTW);
-    
-    drawBins.resize(fft->getBinSize());
-    middleBins.resize(fft->getBinSize());
-    audioBins.resize(fft->getBinSize());
-    
-    // the fft needs to be smoothed out, so we create an array of floats
-    // for that purpose:
-//    fftSmoothed = new float[bufferSize];
-//    for (int i = 0; i < bufferSize; i++){
-//        fftSmoothed[i] = 0;
-//    }
-    
-    activeUnit = NULL;
-    
+	activeUnit = NULL;
+	
     input.connectTo(tap).connectTo(output);
-    input.start();
-    activeUnit = &input;
+	input.start();
+	activeUnit = &input;
+
+	output.start();
+	ofSetVerticalSync(true);
+	ofEnableSmoothing();
     
-    output.start();
-    ofSetVerticalSync(true);
-    ofEnableSmoothing();
     
+    //---ofxFFT
+    bufferSize = 2048;
+    
+    fft.setup(false,bufferSize);
+    fft.setNumFFTBins(100);
 }
 
 //--------------------------------------------------------------
@@ -42,43 +31,26 @@ void ofApp::update(){
     tap.getStereoWaveform(oscLineLeft, oscLineRight, ofGetWidth(), ofGetHeight()/4);
     
     
+    
     vector<Float32> outData;
     tap.getLeftSamples(outData);
     
-    //--ofxFFT
-    
     if(outData.size() > 0){
-        float maxValue = 0;
-        for(int i = 0; i <bufferSize; i++) {
-            if(abs(outData[i]) > maxValue) {
-                maxValue = abs(outData[i]);
-            }
+        
+        float * curBuffer = (float*)malloc(bufferSize * sizeof(float));
+        for(int i=0; i<outData.size();i++){
+            curBuffer[i] = outData[i];
         }
-        for(int i = 0; i < bufferSize; i++) {
-            outData[i] /= maxValue;
-        }
+//        float* curFft = fft->getAmplitude();
+//        memcpy(&audioBins[0], curFft, sizeof(float) * fft->getBinSize());
         
-        fft->setSignal(outData);
-        
-        float* curFft = fft->getAmplitude();
-        memcpy(&audioBins[0], curFft, sizeof(float) * fft->getBinSize());
-        
-        maxValue = 0;
-        for(int i = 0; i < fft->getBinSize(); i++) {
-            if(abs(audioBins[i]) > maxValue) {
-                maxValue = abs(audioBins[i]);
-            }
-        }
-        for(int i = 0; i < fft->getBinSize(); i++) {
-            audioBins[i] /= maxValue;
-        }
-        
-        soundMutex.lock();
-        middleBins = audioBins;
-        soundMutex.unlock();
-        
-        
+        fft.fft.audioReceived(curBuffer, bufferSize, 1);
+      
+        fft.update();
     }
+    
+    
+    
 }
 
 //--------------------------------------------------------------
@@ -93,44 +65,37 @@ void ofApp::draw(){
    
     //--draw FFT
     ofSetColor(255);
-    ofPushMatrix();
-    ofTranslate(16, ofGetHeight()/2);
-    
-    soundMutex.lock();
-    drawBins = middleBins;
-    soundMutex.unlock();
-    
-    ofDrawBitmapString("Frequency Domain", 0, 0);
-    plot(drawBins, -plotHeight, plotHeight / 2);
-    ofPopMatrix();
-    string msg = ofToString((int) ofGetFrameRate()) + " fps";
-    ofDrawBitmapString(msg, ofGetWidth() - 80, ofGetHeight() - 20);
-    
 
+//--process fft
+    fft.drawBars();
+    fft.drawDebug();
+    
+    ofNoFill();
+    ofDrawRectangle(824, 0, 200, 200);
+    ofDrawRectangle(824, 200, 200, 200);
+    ofDrawRectangle(824, 400, 200, 200);
+    ofDrawRectangle(824, 600, 200, 200);
+    
+    fft.drawHistoryGraph(ofPoint(824,0), LOW);
+    fft.drawHistoryGraph(ofPoint(824,200),MID );
+    fft.drawHistoryGraph(ofPoint(824,400),HIGH );
+    fft.drawHistoryGraph(ofPoint(824,600),MAXSOUND );
+    ofDrawBitmapString("LOW",850,20);
+    ofDrawBitmapString("HIGH",850,420);
+    ofDrawBitmapString("MID",850,220);
+    ofDrawBitmapString("MAX VOLUME",850,620);
+    
+    ofSetColor(0);
+    ofDrawBitmapString("Press 'r' or 'q' to toggle normalization of values", 20,320);
+    
     //--info
 	ofSetColor(255);
 	if(activeUnit){
 		ofDrawBitmapString("Press space to show the Audio Unit's UI", ofPoint(25,25));
 	}
-	else {
-		ofDrawBitmapString("You need to un-comment one of the blocks in\
-						   setup() to generate some audio", ofPoint(25,25));
-	}
+    
+    
 	
-}
-
-void ofApp::plot(vector<float>& buffer, float scale, float offset) {
-    ofNoFill();
-    int n = buffer.size();
-    ofDrawRectangle(0, 0, n, plotHeight);
-    glPushMatrix();
-    glTranslatef(0, plotHeight / 2 + offset, 0);
-    ofBeginShape();
-    for (int i = 0; i < n; i++) {
-        ofVertex(i, sqrt(buffer[i]) * scale);
-    }
-    ofEndShape();
-    glPopMatrix();
 }
 
 //--------------------------------------------------------------
@@ -140,6 +105,13 @@ void ofApp::keyPressed(int key){
 		activeUnit->showUI();
 	}
 
+    if(key=='q'){
+        fft.setVolumeRange(100);
+        fft.setNormalize(false);
+    }
+    if(key=='r'){
+        fft.setNormalize(true);
+    }
 }
 
 //--------------------------------------------------------------

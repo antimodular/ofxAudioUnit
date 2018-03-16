@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-               BuildableName = "example-10-ofxFTT.app"
-               BlueprintName = "example-10-ofxFTT"
-               ReferencedContainer = "container:example-10-ofxFTT.xcodeproj">
+               BuildableName = "example-11-ofxProcessFFT.app"
+               BlueprintName = "example-11-ofxProcessFFT"
+               ReferencedContainer = "container:example-11-ofxProcessFFT.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "example-10-ofxFTT.app"
-            BlueprintName = "example-10-ofxFTT"
-            ReferencedContainer = "container:example-10-ofxFTT.xcodeproj">
+            BuildableName = "example-11-ofxProcessFFT.app"
+            BlueprintName = "example-11-ofxProcessFFT"
+            ReferencedContainer = "container:example-11-ofxProcessFFT.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "example-10-ofxFTT.app"
-            BlueprintName = "example-10-ofxFTT"
-            ReferencedContainer = "container:example-10-ofxFTT.xcodeproj">
+            BuildableName = "example-11-ofxProcessFFT.app"
+            BlueprintName = "example-11-ofxProcessFFT"
+            ReferencedContainer = "container:example-11-ofxProcessFFT.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "example-10-ofxFTT.app"
-            BlueprintName = "example-10-ofxFTT"
-            ReferencedContainer = "container:example-10-ofxFTT.xcodeproj">
+            BuildableName = "example-11-ofxProcessFFT.app"
+            BlueprintName = "example-11-ofxProcessFFT"
+            ReferencedContainer = "container:example-11-ofxProcessFFT.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
