@@ -1,7 +1,7 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){
+void ofApp::setup(){
     ofSetBackgroundColor(0);
     
 
@@ -22,12 +22,12 @@ void testApp::setup(){
 }
 
 //--------------------------------------------------------------
-void testApp::update(){
+void ofApp::update(){
 
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
+void ofApp::draw(){
 
     ofSetColor(255);
     ofDrawBitmapString("press r to record, s to stop, p to replay", 10,10);
@@ -41,11 +41,11 @@ void testApp::draw(){
     }
 }
 
-void testApp::exit(){
+void ofApp::exit(){
 
 }
 
-void testApp::startRecording(string filePath) {
+void ofApp::startRecording(string filePath) {
 	
 	// converting file path from C++ string to NSString
 	NSString * fileString = [NSString stringWithUTF8String:filePath.c_str()];
@@ -76,15 +76,15 @@ void testApp::startRecording(string filePath) {
 	}
 }
 
-void testApp::stopRecording() {
+void ofApp::stopRecording() {
 	[recorder stop];
 }
 
-void testApp::finishedRecording(string fileName) {
+void ofApp::finishedRecording(string fileName) {
 	cout << "Recorded to " << fileName << endl;
 }
 
-void testApp::keyPressed(int key) {
+void ofApp::keyPressed(int key) {
     if(key == 'r'){
         isRecording = true;
         newFileName = ofGetTimestampString()+".m4a";
@@ -107,14 +107,14 @@ void testApp::keyPressed(int key) {
     }
 }
 
-void testApp::keyReleased(int key){}
-void testApp::mouseMoved(int x, int y ){}
-void testApp::mouseDragged(int x, int y, int button){}
-void testApp::mousePressed(int x, int y, int button){}
-void testApp::mouseReleased(int x, int y, int button){}
-void testApp::windowResized(int w, int h){}
-void testApp::gotMessage(ofMessage msg){}
-void testApp::dragEvent(ofDragInfo dragInfo){}
+void ofApp::keyReleased(int key){}
+void ofApp::mouseMoved(int x, int y ){}
+void ofApp::mouseDragged(int x, int y, int button){}
+void ofApp::mousePressed(int x, int y, int button){}
+void ofApp::mouseReleased(int x, int y, int button){}
+void ofApp::windowResized(int w, int h){}
+void ofApp::gotMessage(ofMessage msg){}
+void ofApp::dragEvent(ofDragInfo dragInfo){}
 
 @implementation RecordDelegate
 

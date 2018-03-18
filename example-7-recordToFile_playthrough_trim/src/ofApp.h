@@ -5,19 +5,20 @@
 
 #ifdef __OBJC__
 #import <AVFoundation/AVFoundation.h>
-class testApp;
+class ofApp;
 @interface RecordDelegate : NSObject<AVAudioRecorderDelegate>
 {
-	testApp * _app;
+    ofApp * _app;
 }
-@property (nonatomic, assign) testApp * app;
+@property (nonatomic, assign) ofApp * app;
 @end
 #else
 typedef void AVCaptureAudioFileOutput;
 typedef void RecordDelegate;
+typedef void AVAudioRecorder;
 #endif
 
-class testApp : public ofBaseApp {
+class ofApp : public ofBaseApp {
 	
 public:
 	void setup();
