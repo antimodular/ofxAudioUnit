@@ -5,8 +5,8 @@
 
 #ifdef __OBJC__
 #import <AVFoundation/AVFoundation.h>
-//#import <webrtcvad/webrtcvad.h>
-#import </Applications/openFrameworks-master/addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad/webrtcvad/webrtcvad.h>
+#import <webrtcvad/webrtcvad.h>
+//#import </Applications/openFrameworks-master/addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad/webrtcvad/webrtcvad.h>
 class ofApp;
 @interface RecordDelegate : NSObject<AVAudioRecorderDelegate>
 {
