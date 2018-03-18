@@ -458,7 +458,7 @@
 					../../../addons/ofxAudioUnit/src,
 					../../../addons/ofxAudioUnit/src/CAPublicUtility,
 					../../../addons/ofxAudioUnit/src/TPCircularBuffer,
-					"/Applications/openFrameworks-master/addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad",
+					"../../../addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -523,7 +523,7 @@
 					../../../addons/ofxAudioUnit/src,
 					../../../addons/ofxAudioUnit/src/CAPublicUtility,
 					../../../addons/ofxAudioUnit/src/TPCircularBuffer,
-					"/Applications/openFrameworks-master/addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad",
+					"../../../addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
@@ -561,7 +561,7 @@
 					../../../addons/ofxAudioUnit/src,
 					../../../addons/ofxAudioUnit/src/CAPublicUtility,
 					../../../addons/ofxAudioUnit/src/TPCircularBuffer,
-					"/Applications/openFrameworks-master/addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad",
+					"../../../addons/ofxAudioUnit/example-12-recordToFile_playthrough_VAD/src/webrtcvad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = (
